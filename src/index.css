@@ -7,7 +7,7 @@
 }
 
 body {
-  background-image: url('../public/bg.jpg');
+  background-image: url('../public/bg.png');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,7 +19,7 @@ body {
   width: 90vw;
   height: 90vh;
   display: flex;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(3px);
   background-color: rgb(76 100 143 / 75%);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.774);
