@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import './chatList.css';
+import AddUser from './addUser/AddUser';
 
 const ChatList = () => {
-    const [addMode, setAddMode] = useState(false)
+    const [addMode, setAddMode] = useState(false);
 
 
     return (
@@ -13,7 +14,7 @@ const ChatList = () => {
                     <input type='text' placeholder='Поиск'></input>
                 </div>
                 {/* //переключалка плюс/минус (добавить/удалить) */}
-                <img src= {addMode ? "./minus.png" : "./plus.png" } className='addUser'
+                <img src= {addMode ? "./minus.png" : "./plus.png" } className='add'
                 onClick={() => setAddMode((prev) => !prev)}>
                 </img>
             </div>
@@ -66,8 +67,10 @@ const ChatList = () => {
                     <p>текст в chartList.jsx</p>
                 </div>
             </div>
+
+            {addMode && <AddUser />}
         </div>
-    )
-}
+    );
+};
 
 export default ChatList;
