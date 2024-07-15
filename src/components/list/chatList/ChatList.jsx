@@ -17,14 +17,16 @@ const ChatList = () => {
                 onClick={() => setAddMode((prev) => !prev)}>
                 </img>
             </div>
+            
             {/* элементы чата */}
             <div className="item">
-                <img src='./avatar1.png'></img>
+                <img src='./avatar3.png'></img>
                 <div className="texts">
                     <span>Сбербанк</span>
                     <p>Найди работу.</p>
                 </div>
             </div>
+
             <div className="item">
                 <img src='./avatar2.png'></img>
                 <div className="texts">
@@ -32,25 +34,36 @@ const ChatList = () => {
                     <p>у нас пропал степлер</p>
                 </div>
             </div>
+
             <div className="item">
-                <img src='./avatar3.png'></img>
+                <img src='./avatar1.png'></img>
                 <div className="texts">
                     <span>Коля Москва</span>
                     <p>Вы ещё набираете джунов?</p>
                 </div>
             </div>
+
             <div className="item">
                 <img src='./avatar4.png'></img>
                 <div className="texts">
                     <span>Товарищ Майор</span>
-                    <p>17:45, вторник. Ваша шутка про Москву покорила моё сердце</p>
+                    <p>17:45, вторник. Ваша шутка про Москву покорила моё сердце...</p>
                 </div>
             </div>
+
             <div className="item">
                 <img src='./avatar5.png'></img>
                 <div className="texts">
                     <span>Подруга</span>
                     <p>Полина, ты не можешь всё превращать в мем!</p>
+                </div>
+            </div>
+
+            <div className="item">
+                <img src='./avatar6.png'></img>
+                <div className="texts">
+                    <span>Саша</span>
+                    <p>текст в chartList.jsx</p>
                 </div>
             </div>
         </div>
