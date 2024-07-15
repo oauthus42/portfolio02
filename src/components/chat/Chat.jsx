@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 
 const Chat = () => {
 const [open, setOpen] = useState(false);
 const [text, setText] = useState("");
-console.log(text)
+
+//автоматический скролл чата вниз при загрузке\обновлении страницы
+const endRef = useRef(null);
+useEffect(() => {
+    endRef.current?.scrollIntoView({behavior:'smooth'});
+}, []);
+
 
 
 const handleEmoji = (e) => {
@@ -36,14 +42,14 @@ const handleEmoji = (e) => {
                 <div className="message">
                     <img src='./avatar6.png'></img>
                     <div className="texts">
-                        <p>Исходящее сообщение</p>
+                        <p>Входящее сообщение</p>
                         <span>15 минут назад</span>
                     </div>
                 </div>
 
                 <div className="message own">
                     <div className="texts">
-                        <p>Входящее сообщение</p>
+                        <p>Исходящее сообщение</p>
                         <span>10 минут назад</span>
                     </div>
                 </div>
@@ -52,10 +58,12 @@ const handleEmoji = (e) => {
                     <img src='./avatar6.png'></img>
                     <div className="texts">
                         <img src='https://colodu.club/uploads/posts/2022-11/1667450724_14-colodu-club-p-gerbarii-v-interere-vkontakte-14.jpg'></img>
-                        <p>Исходящее сообщение</p>
+                        <p>Входящее сообщение</p>
                         <span>4 минуты назад</span>
                     </div>
                 </div>
+
+            <div ref={endRef}></div>
 
             </div>
 
