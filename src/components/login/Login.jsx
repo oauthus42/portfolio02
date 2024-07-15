@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './login.css'
+import { toast } from 'react-toastify';
 
 const Login = () => {
 //состояние для отображения загруженной фотографии
@@ -17,12 +18,16 @@ const handleAvatar = (e) => {
 }
 }
 
+const handleLogin = (e) => {
+    e.preventDefault()
+}
+
 
     return (
         <div className='login'>
             <div className="item">
                 <h2>С возвращением, </h2>
-                <form>
+                <form onSubmit={handleLogin}>
                     <input type='text' placeholder='e-mail' name='email'></input>
                     <input type='password' placeholder='пароль' name='password'></input>
                     <button>Войти</button>
