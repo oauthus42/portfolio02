@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useChatStore } from '../../lib/chatStore';
+import { useUserStore } from '../../lib/userStore';
 
 const Chat = () => {
 const [open, setOpen] = useState(false);
 const [text, setText] = useState("");
 const [chat, setChat] = useState();
+const {chatId, user} = useChatStore();
+const {currentUser} = useUserStore();
 
 //автоматический скролл чата вниз при загрузке\обновлении страницы
 const endRef = useRef(null);
@@ -32,6 +36,57 @@ const handleEmoji = (e) => {
     setOpen(false)
 }
 
+const handleSend = async () => {
+    if (text === "") return;
+    let imgUrl = null;
+
+    try {
+      if (img.file) {
+        imgUrl = await upload(img.file);
+      }
+      await updateDoc(doc(db, "chats", chatId), {
+        messages: arrayUnion({
+          senderId: currentUser.id,
+          text,
+          createdAt: new Date(),
+          ...(imgUrl && { img: imgUrl }),
+        }),
+      });
+
+      const userIDs = [currentUser.id, user.id];
+
+      userIDs.forEach(async (id) => {
+        const userChatsRef = doc(db, "userchats", id);
+        const userChatsSnapshot = await getDoc(userChatsRef);
+
+        if (userChatsSnapshot.exists()) {
+          const userChatsData = userChatsSnapshot.data();
+
+          const chatIndex = userChatsData.chats.findIndex((c) => c.chatId === chatId);
+
+          userChatsData.chats[chatIndex].lastMessage = text;
+          userChatsData.chats[chatIndex].isSeen =
+            id === currentUser.id ? true : false;
+          userChatsData.chats[chatIndex].updatedAt = Date.now();
+
+          await updateDoc(userChatsRef, {
+            chats: userChatsData.chats,
+          });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    } finally{
+    setImg({
+      file: null,
+      url: "",
+    });
+
+    setText("");
+    }
+  };
+
+
     return (
         <div className="chat">
             <div className="top">
@@ -51,30 +106,18 @@ const handleEmoji = (e) => {
             </div>
 
             <div className="center">
-
-                <div className="message">
+            {chat?.messages?.map(message => (
+                <div className="message" key={message?.createAt}>
                     <img src='./avatar6.png'></img>
                     <div className="texts">
-                        <p>Входящее сообщение</p>
-                        <span>15 минут назад</span>
-                    </div>
-                </div>
-
-                <div className="message own">
-                    <div className="texts">
-                        <p>Исходящее сообщение</p>
-                        <span>10 минут назад</span>
-                    </div>
-                </div>
-
-                <div className="message">
-                    <img src='./avatar6.png'></img>
-                    <div className="texts">
-                        <img src='https://colodu.club/uploads/posts/2022-11/1667450724_14-colodu-club-p-gerbarii-v-interere-vkontakte-14.jpg'></img>
-                        <p>Входящее сообщение</p>
+                        {message.img && 
+                        <img src={message.img}>
+                        </img>}
+                        <p>{message.text}</p>
                         <span>4 минуты назад</span>
                     </div>
                 </div>
+            ))}
 
             <div ref={endRef}></div>
 
@@ -98,7 +141,7 @@ const handleEmoji = (e) => {
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
                     </div>
                 </div>
-                <button className='sendButton'>Отправить</button>
+                <button className='sendButton' onClick={handleSend}>Отправить</button>
             </div>
         </div>
     )

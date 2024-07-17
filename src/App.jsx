@@ -10,6 +10,8 @@ import Notification from "./components/notification/Notification";
 
 const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { chatId} = useChatStore();
+
   //потом пофиксить, и в рендере тоже:
   //const user = true;
 
@@ -30,8 +32,8 @@ const App = () => {
       {currentUser ? (
         <>
           <List />
-          <Chat />
-          <Detail />
+          {chatId && <Chat />}
+          {chatId && <Detail />}
         </>
       ) : (
         <Login />
