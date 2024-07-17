@@ -1,7 +1,8 @@
 # portfolio02
 (Чат)   React + React Toastify + Firebase
 
-![Screenshot_1](https://github.com/user-attachments/assets/1a6966b5-66d1-4842-9f84-cc1b40425142)
+![Screenshot_1](https://github.com/user-attachments/assets/9e924c48-9850-4573-8dca-76efe206fe11)
+
 
 ![login](https://github.com/user-attachments/assets/c40883a5-a091-4041-8949-5b2572ed07bc)
 
