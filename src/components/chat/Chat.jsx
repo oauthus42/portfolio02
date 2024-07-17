@@ -1,16 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import './chat.css';
 import EmojiPicker from 'emoji-picker-react';
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 
 const Chat = () => {
 const [open, setOpen] = useState(false);
 const [text, setText] = useState("");
+const [chat, setChat] = useState();
 
 //автоматический скролл чата вниз при загрузке\обновлении страницы
 const endRef = useRef(null);
+
 useEffect(() => {
     endRef.current?.scrollIntoView({behavior:'smooth'});
 }, []);
+
+useEffect(() => {
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+      setChat(res.data());
+    });
+
+    return () => {
+      unSub();
+    };
+  }, [chatId]);
 
 
 

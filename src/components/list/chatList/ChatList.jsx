@@ -53,9 +53,9 @@ const ChatList = () => {
             {filteredChats.map((chat) => (
 
                 <div className="item">
-                <img src='./avatar6.png'></img>
+                <img src={chat.user.avatar || './avatar6.png'}></img>
                 <div className="texts">
-                    <span>Саша</span>
+                    <span>{chat.user.username}</span>
                     <p>текст в chartList.jsx</p>
                 </div>
                 </div>
