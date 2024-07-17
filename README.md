@@ -9,7 +9,8 @@
 ![loading](https://github.com/user-attachments/assets/6fd9f981-8153-4bd9-8712-1c9052b524b0)
 
 
-![Screenshot_3](https://github.com/user-attachments/assets/f84897c1-a04c-4bb1-89c3-747b3e1eb203)
+![Screenshot_3](https://github.com/user-attachments/assets/ccbb939c-17f6-4427-affe-285d62263cd5)
+
 
 
 
