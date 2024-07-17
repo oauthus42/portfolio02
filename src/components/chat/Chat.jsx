@@ -6,11 +6,15 @@ import { useChatStore } from '../../lib/chatStore';
 import { useUserStore } from '../../lib/userStore';
 
 const Chat = () => {
-const [open, setOpen] = useState(false);
-const [text, setText] = useState("");
-const [chat, setChat] = useState();
-const {chatId, user} = useChatStore();
-const {currentUser} = useUserStore();
+    const [open, setOpen] = useState(false);
+    const [text, setText] = useState("");
+    const [chat, setChat] = useState();
+    const {chatId, user} = useChatStore();
+    const {currentUser} = useUserStore();
+    const [img, setImg] = useState({
+        file: null,
+        url: "",
+  });
 
 //автоматический скролл чата вниз при загрузке\обновлении страницы
 const endRef = useRef(null);
@@ -34,7 +38,7 @@ useEffect(() => {
 const handleEmoji = (e) => {
     setText ((prev) => prev + e.emoji)
     setOpen(false)
-}
+};
 
 const handleSend = async () => {
     if (text === "") return;
@@ -84,8 +88,16 @@ const handleSend = async () => {
 
     setText("");
     }
-  };
+};
 
+const handleImg = (e) => {
+    if (e.target.files[0]) {
+      setImg({
+        file: e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+};
 
     return (
         <div className="chat">
@@ -106,36 +118,39 @@ const handleSend = async () => {
             </div>
 
             <div className="center">
-            {chat?.messages?.map(message => (
-                <div className="message" key={message?.createAt}>
-                    <img src='./avatar6.png'></img>
-                    <div className="texts">
-                        {message.img && 
-                        <img src={message.img}>
-                        </img>}
-                        <p>{message.text}</p>
-                        <span>4 минуты назад</span>
+                {chat?.messages?.map((message) => (
+                    <div className={message.senderId === currentUser?.id ? "message own" : "message"}
+                        key={message?.createAt}>
+                        <div className="texts">{message.img && <img src={message.img} alt="" />}
+                            <p>{message.text}</p>
+                            <span>{format(message.createdAt.toDate())}</span>
+                        </div>
                     </div>
-                </div>
-            ))}
-
-            <div ref={endRef}></div>
-
+                ))}
+                {img.url && (
+                    <div className="message own">
+                        <div className="texts">
+                            <img src={img.url} alt="" />
+                        </div>
+                    </div>
+                )}
+                <div ref={endRef}></div>
             </div>
 
             <div className="bottom">
                 <div className="icons">
-                    <img src='./img.png'></img>
-                    <img src='./camera.png'></img>
-                    <img src='./mic.png'></img>
+                    <label htmlFor="file">
+                        <img src="./img.png" alt="" />
+                    </label>
+                    <input type="file" id="file" style={{ display: "none" }} onChange={handleImg}/>
+                    <img src="./camera.png" alt="" />
+                    <img src="./mic.png" alt="" />
                 </div>
-                <input type='text' placeholder='Введите сообщение'
-                value={text}
-                onChange={e => setText(e.target.value)}>
+                <input type='text' placeholder='Введите сообщение' value={text}
+                    onChange={e => setText(e.target.value)}>
                 </input>
                 <div className="emoji">
-                    <img src='./emoji.png'
-                    onClick={() => setOpen((prev) => !prev)}>
+                    <img src='./emoji.png' onClick={() => setOpen((prev) => !prev)}>
                     </img>
                     <div className="picker">
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
