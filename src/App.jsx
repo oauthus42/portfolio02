@@ -11,11 +11,11 @@ import Notification from "./components/notification/Notification";
 const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   //потом пофиксить, и в рендере тоже:
-  const user = true;
+  //const user = true;
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
-      fetchUserInfo(user?.uid);
+      fetchUserInfo(user.uid);
     });
 
     return () => {
@@ -24,11 +24,10 @@ const App = () => {
   }, [fetchUserInfo]);
 
   if (isLoading) return <div className="loading">Загрузка...</div>;
-  console.log(currentUser)
 
   return (
     <div className="container">
-      {user ? (
+      {currentUser ? (
         <>
           <List />
           <Chat />
