@@ -1,73 +1,65 @@
-import { useState } from 'react';
-import './chatList.css';
-import AddUser from './addUser/AddUser';
+import "./chatList.css";
+import { useEffect, useState } from "react";
+import { useUserStore } from "../../../lib/userStore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { db } from "../../../lib/firebase";
+import AddUser from "./addUser/AddUser";
 
 const ChatList = () => {
     const [addMode, setAddMode] = useState(false);
+    const [chats, setChats] = useState([]);
+    const currentUser = useUserStore();
 
+    useEffect(() => {
+        const unsub = onSnapshot(doc(db, "userchats", currentUser.id), async (res) => {
+            const items = res.data().chats;
+
+            const promises = items.map( async(item) => {
+                const userDocRef = doc(db, "users", item.receiverId);
+                const userDocSnap = await getDoc(userDocRef);
+
+                const user = userDocSnap.data();
+                return {...item, user};
+
+            });
+
+            const chatData = await Promise.all(promises);
+            setChats(chatData.sort((a, b) => b.updateAt - a.updateAt)); 
+        });
+
+        return () => { unsub()};
+
+    }, [currentUser.id]);
+
+    console.log(chats);
 
     return (
         <div className="chatList">
             <div className="search">
                 <div className="searchBar">
                     <img src='./search.png'></img>
-                    <input type='text' placeholder='Поиск'></input>
+                    <input type='text' placeholder='Поиск'
+                        onChange={(e) => setInput(e.target.value)}>
+                    </input>
                 </div>
                 {/* //переключалка плюс/минус (добавить/удалить) */}
-                <img src= {addMode ? "./minus.png" : "./plus.png" } className='add'
-                onClick={() => setAddMode((prev) => !prev)}>
+                <img src= {addMode ? "./minus.png" : "./plus.png" } 
+                    className='add'
+                    onClick={() => setAddMode((prev) => !prev)}>
                 </img>
             </div>
             
             {/* элементы чата */}
-            <div className="item">
-                <img src='./avatar3.png'></img>
-                <div className="texts">
-                    <span>Сбербанк</span>
-                    <p>Найди работу.</p>
-                </div>
-            </div>
+            {filteredChats.map((chat) => (
 
-            <div className="item">
-                <img src='./avatar2.png'></img>
-                <div className="texts">
-                    <span>Первый отдел</span>
-                    <p>у нас пропал степлер</p>
-                </div>
-            </div>
-
-            <div className="item">
-                <img src='./avatar1.png'></img>
-                <div className="texts">
-                    <span>Коля Москва</span>
-                    <p>Вы ещё набираете джунов?</p>
-                </div>
-            </div>
-
-            <div className="item">
-                <img src='./avatar4.png'></img>
-                <div className="texts">
-                    <span>Товарищ Майор</span>
-                    <p>17:45, вторник. Ваша шутка про Москву покорила моё сердце...</p>
-                </div>
-            </div>
-
-            <div className="item">
-                <img src='./avatar5.png'></img>
-                <div className="texts">
-                    <span>Подруга</span>
-                    <p>Полина, ты не можешь всё превращать в мем!</p>
-                </div>
-            </div>
-
-            <div className="item">
+                <div className="item">
                 <img src='./avatar6.png'></img>
                 <div className="texts">
                     <span>Саша</span>
                     <p>текст в chartList.jsx</p>
                 </div>
-            </div>
-
+                </div>
+            ))}
             {addMode && <AddUser />}
         </div>
     );
