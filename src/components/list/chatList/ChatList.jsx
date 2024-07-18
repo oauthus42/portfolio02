@@ -78,11 +78,13 @@ const ChatList = () => {
                 <div className="item" key={chat.chatId} onClick={handleSelect(chat)}
                 // если сообщение прочитано - фон прозрачный, если нет - синий:
                 style={{backgroundColor: chat ?.isSeen ? "transparent" : "#5183ff"}}>
-                <img src={chat.user.avatar || './avatar6.png'}></img>
-                <div className="texts">
-                    <span>{chat.user.username}</span>
-                    <p>{chat.lastMessage}</p>
-                </div>
+                    <img src={chat.user.blocked.includes(currentUser.id) ? 
+                            "./avatar.png" : chat.user.avatar || "./avatar.png"}>
+                    </img>
+                    <div className="texts">
+                        <span>{chat.user.blocked.includes(currentUser.id) ? "User" : chat.user.username}</span>
+                        <p>{chat.lastMessage}</p>
+                    </div>
                 </div>
             ))}
             {addMode && <AddUser />}

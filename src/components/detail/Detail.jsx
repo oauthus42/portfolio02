@@ -1,12 +1,36 @@
 import './detail.css';
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useChatStore } from "../../lib/chatStore";
+import { auth, db } from "../../lib/firebase";
+import { useUserStore } from "../../lib/userStore";
+
 
 const Detail = () => {
+    const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock, resetChat } = useChatStore();
+    const { currentUser } = useUserStore();
+  
+    const handleBlock = async () => {
+        if (!user) return;
+        const userDocRef = doc(db, "users", currentUser.id);
+        
+        try {
+            await updateDoc(userDocRef, {
+            blocked: isReceiverBlocked ? arrayRemove(user.id) : arrayUnion(user.id),
+        });
+        changeBlock();
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
+  
+
     return (
         <div className="detail">
             <div className="user">
-                <img src='./avatar6.png'></img>
-                <h2>Саша</h2>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero provident esse molestiae.</p>
+                <img src={user?.avatar || "./avatar.png"} alt=""></img>
+                <h2>{user?.username}</h2>
+                <p>Lorem ipsum dolor sit amet.</p>
             </div>
 
             <div className="info">
@@ -51,9 +75,12 @@ const Detail = () => {
                 </div>
             </div>
 
-        <button className='btnBlockUser'>Заблокировать пользователя</button>
+            <button onClick={handleBlock}>
+                {isCurrentUserBlocked ? "Вы заблокированы" : isReceiverBlocked 
+                ? "Заблокированный пользователь" : "Заблокировать пользователя"}
+            </button>
         </div>
-    )
-}
+    );
+};
 
 export default Detail;

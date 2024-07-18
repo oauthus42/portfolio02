@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import './chat.css';
+import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useChatStore } from '../../lib/chatStore';
@@ -9,12 +9,12 @@ const Chat = () => {
     const [open, setOpen] = useState(false);
     const [text, setText] = useState("");
     const [chat, setChat] = useState();
-    const {chatId, user} = useChatStore();
+    const {chatId, user, isCurrentUserBlocked, isReceiverBlocked} = useChatStore();
     const {currentUser} = useUserStore();
     const [img, setImg] = useState({
         file: null,
         url: "",
-  });
+    });
 
 //автоматический скролл чата вниз при загрузке\обновлении страницы
 const endRef = useRef(null);
@@ -104,16 +104,16 @@ const handleImg = (e) => {
             <div className="top">
                 {/* информация о пользователе */}
                 <div className="user">
-                    <img src='avatar6.png'></img>
+                    <img src={user?.avatar || "./avatar.png"} alt=""></img>
                     <div className="texts">
-                        <span>Саша</span>
-                        <p>Lorem, ipsum dolor sit amet.</p>
+                        <span>{user?.username}</span>
+                        <p>Lorem ipsum dolor, sit amet.</p>
                     </div>
                 </div>
                 <div className="icons">
-                    <img src='./phone.png'></img>
-                    <img src='./video.png'></img>
-                    <img src='./info.png'></img>
+                    <img src="./phone.png" alt="" />
+                    <img src="./video.png" alt="" />
+                    <img src="./info.png" alt="" />
                 </div>
             </div>
 
@@ -146,8 +146,10 @@ const handleImg = (e) => {
                     <img src="./camera.png" alt="" />
                     <img src="./mic.png" alt="" />
                 </div>
-                <input type='text' placeholder='Введите сообщение' value={text}
-                    onChange={e => setText(e.target.value)}>
+                <input type='text' placeholder={ isCurrentUserBlocked || isReceiverBlocked
+                    ? "Вы не можете отправить сообщение" : "Введите сообщение..."} 
+                    value={text} onChange={e => setText(e.target.value)}
+                    disabled={isCurrentUserBlocked || isReceiverBlocked}>
                 </input>
                 <div className="emoji">
                     <img src='./emoji.png' onClick={() => setOpen((prev) => !prev)}>
@@ -156,7 +158,8 @@ const handleImg = (e) => {
                         <EmojiPicker open={open} onEmojiClick={handleEmoji} />
                     </div>
                 </div>
-                <button className='sendButton' onClick={handleSend}>Отправить</button>
+                <button className='sendButton' onClick={handleSend}
+                disabled={isCurrentUserBlocked || isReceiverBlocked}>Отправить</button>
             </div>
         </div>
     )
